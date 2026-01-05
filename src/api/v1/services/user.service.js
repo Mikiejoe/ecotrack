@@ -1,20 +1,41 @@
 import { userRepository } from "../../../database/repositories/user.repository.js";
 
-export const register = async (data) => {
-  if (!data.email || !data.password) {
-    throw new Error("Email and password are required");
+export const createUser = async (data) => {
+  try {
+    return await userRepository.create(data);
+  } catch (error) {
+    throw new Error(error.message);
   }
-  const existing = await userRepository.findByEmail(data.email);
-  if (existing) throw new Error("Email already taken");
-
-  return await userRepository.create(data);
 };
 
-export const login = async (data) => {
-  if (!data.email || !data.password) {
-    throw new Error("Email and password are required");
+export const getUserById = async (id) => {
+  try {
+    return await userRepository.findById(id);
+  } catch (error) {
+    throw new Error(error.message);
   }
-  const user = await userRepository.findByEmail(data.email);
-  if (!user) throw new Error("Wrong email or password");
-  
+};
+
+export const getUserByEmail = async (email) => {
+  try {
+    return await userRepository.findByEmail(email);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getUserByEmail2 = async (email) => {
+  try {
+    return await userRepository.findByEmail2(email);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateUser = async (userId, data) => {
+  try {
+    return await userRepository.update(userId, data);
+  } catch (error) {
+    throw error;
+  }
 };
