@@ -22,7 +22,7 @@ export const sendEmail = async (to, subject, html) => {
     }
     catch (error) {
         logger.error('Mail Error: %o', error);
-        throw error;
+        // throw error;
+        return null
     }
 };
-//# sourceMappingURL=mail.service.js.map

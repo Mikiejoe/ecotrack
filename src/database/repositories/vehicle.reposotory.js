@@ -8,11 +8,14 @@ export class VehicleRepository extends BaseRepository {
     async findByVin(vin) {
         return await this.model.findOne({ vin }).exec();
     }
+    async findById(id) {
+        return await this.model.findOne({ _id:id }).exec();
+    }
     async findOverheatingVehicles(threshold) {
         return await this.model.find({ lastTemperature: { $gt: threshold } }).exec();
     }
     async getFleetStats() {
-        console.log(await this.findAll())
+        
         return await this.model.aggregate([
             {
                 $group: {
@@ -54,6 +57,11 @@ export class VehicleRepository extends BaseRepository {
             }
         }, { new: true } // Returns the document after update
         ).exec();
+    }
+
+    async count(){
+        const num = await VehicleModel.countDocuments()
+        return num
     }
 }
 // Export a singleton instance

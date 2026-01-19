@@ -20,13 +20,14 @@ class App {
         this.app.use(cors());
         this.app.use(helmet());
         this.app.use(express.json());
-        this.app.use(errorHandler)
+        
     }
     setupRoutes() {
         this.app.get('/', (req, res) => {
             res.status(200).send('API is running');
         });
         this.app.use(`/api/${config.apiVersion}`, v1Routes);
+        this.app.use(errorHandler)
     }
     listen(port, callback) {
         this.app.listen(port, callback);

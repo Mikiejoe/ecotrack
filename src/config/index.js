@@ -18,7 +18,7 @@ export default {
         from: process.env.MAIL_FROM_ADDRESS,
     },
     auth: {
-        jwtSecret: process.env.JWT_SECRET || "your-super-secret-key",
+        jwtSecret: process.env.ACCESS_SECRET,
         accessExpiresIn: "1d",
         refreshSecret:process.env.REFRESH_SECRET,
         refreshExpiresIn: "7m"

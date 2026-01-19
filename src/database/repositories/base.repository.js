@@ -1,4 +1,3 @@
-import mongoose, { Model, Document } from 'mongoose';
 export class BaseRepository {
     model;
     constructor(model) {
@@ -23,5 +22,8 @@ export class BaseRepository {
     async delete(id) {
         const result = await this.model.findByIdAndDelete(id).exec();
         return result !== null;
+    }
+    async deleteMany(filter){
+        return await this.model.deleteMany(filter)
     }
 }
