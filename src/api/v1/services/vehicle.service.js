@@ -1,5 +1,5 @@
 // import { vehicleRepository } from 'database/vehicle.repository.js';
-import { vehicleEvents } from '../../../events/vehicle.events.js';
+// import { vehicleEvents } from '../../../events/vehicle.events.js';
 import logger from '../../../core/logger.js';
 import { vehicleRepository } from '../../../database/repositories/vehicle.reposotory.js';
 
@@ -51,12 +51,12 @@ export const processTelemetryUpdate = async (id, telemetry) => {
     if (temperature > TEMP_THRESHOLD) {
         logger.warn(`ANOMALY DETECTED: Vehicle ${updatedVehicle.vin} is at ${temperature}°C`);
         // 3. Trigger decoupled side-effects
-        vehicleEvents.emit('ENGINE_OVERHEAT', {
-            vehicleId: id,
-            vin: updatedVehicle.vin,
-            temperature,
-            timestamp: new Date()
-        });
+            // vehicleEvents.emit('ENGINE_OVERHEAT', {
+            //     vehicleId: id,       
+            //     vin: updatedVehicle.vin,
+            //     temperature,
+            //     timestamp: new Date()
+            // });
     }
     return updatedVehicle;
 };
@@ -80,6 +80,6 @@ export const updateVehicleLocation = async (id, longitude, latitude) => {
     if (!updatedVehicle) {
         throw new Error('Vehicle not found');
     }
-    vehicleEvents.emit('LOCATION_UPDATED', { id, coordinates: [longitude, latitude] });
+    // vehicleEvents.emit('LOCATION_UPDATED', { id, coordinates: [longitude, latitude] });
     return updatedVehicle;
 };

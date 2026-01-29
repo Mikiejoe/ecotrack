@@ -14,9 +14,18 @@ const tripSchema = new mongoose.Schema(
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: { type: [Number], required: true },
     },
+    currentPoint:{
+      type: { type: String, enum: ["Point"], default: "Point" },
+      coordinates: { type: [Number]},
+    },
     startPoint: {
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: { type: [Number], required: true },
+    },
+    status: {
+      type: String,
+      enum: ["completed", "in-progress", "forfeited"],
+      default: "in-progress",
     },
   },
   {
@@ -24,4 +33,4 @@ const tripSchema = new mongoose.Schema(
   }
 );
 
-export const TripModel = new mongoose.model('Trip',tripSchema)
+export const TripModel = new mongoose.model("Trip", tripSchema);

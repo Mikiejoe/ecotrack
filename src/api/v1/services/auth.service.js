@@ -54,7 +54,7 @@ class AuthService {
     }
   }
 
-  async validateAccessToken(token) {
+   validateAccessToken(token) {
     try {
       return jwt.verify(token, ACCESS_TOKEN_SECRET);
     } catch (err) {
@@ -63,7 +63,7 @@ class AuthService {
     }
   }
 
-  async validateRefreshToken(token) {
+   validateRefreshToken(token) {
     try {
       return jwt.verify(token, REFRESH_TOKEN_SECRET);
     } catch (err) {

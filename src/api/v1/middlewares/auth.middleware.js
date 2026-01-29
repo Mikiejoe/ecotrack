@@ -13,7 +13,8 @@ export const authenticate = (req, res, next) => {
   }
   try {
     const decoded = authService.validateAccessToken(token);
-
+    if (!decoded)
+      return res.status(403).json({ message: "Invalid or expired token" });
     req.user = decoded;
     next();
   } catch (error) {

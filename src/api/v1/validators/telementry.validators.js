@@ -1,3 +1,5 @@
+import { body } from "express-validator";
+
 export const telementryValidation = [
   body("vehicle").isMongoId().withMessage("Invalid Vehicle ID"),
   body("temperature").isFloat().withMessage("temperature must be numeric"),

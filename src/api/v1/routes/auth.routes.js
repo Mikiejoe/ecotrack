@@ -3,7 +3,7 @@ import {
   loginValidation,
   userValidation,
 } from "../validators/user.validator.js";
-import { validate } from "../middlewares/validator.moddleware.js";
+import { validate } from "../middlewares/validator.middleware.js";
 import { authController } from "../controllers/auth.controller.js";
 
 const router = Router();

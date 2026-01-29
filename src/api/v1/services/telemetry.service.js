@@ -1,29 +1,30 @@
-import { vehicleEvents } from "../../../events/vehicle.events.js";
 import logger from "../../../core/logger.js";
 import { vehicleRepository } from "../../../database/repositories/vehicle.reposotory.js";
 import { alertRepository } from "../../../database/repositories/alert.repository.js";
 import { telementryRepository } from "../../../database/repositories/telementry.repository.js";
+import { Queue } from "bullmq";
+import config from "../../../config/index.js";
+
+const truckQueue = new Queue("truck-data-queue", { connection: config.redis });
 
 export const processTelemetry = async (vehicleId, data) => {
-  logger.info(`Processing data for vehicle: ${vehicleId}`);
-  vehicleEvents.emit("SAVE_TELEMENTRY", { vehicleId, data });
+  logger.info(`<service> Processing data for vehicle: ${vehicleId}`);
+  const d = {
+    ...data,
+    vehicle: vehicleId,
+  };
+  // console.log("d: ",d)
 
-  if (data.temperature > 100) {
-    logger.warn(`Critical temperature detected for ${vehicleId}`);
-    vehicleEvents.emit("ENGINE_OVERHEAT", {
-      vehicleId,
-      temp: data.temperature,
-    });
-  }
-  if (data.speed > 100) {
-    logger.warn(`Critical speed detected for ${vehicleId}`);
-    vehicleEvents.emit("OVERSPEAD", {
-      vehicleId,
-      speed: data.speed,
-    });
-  }
+  await truckQueue.add("process-telemetry", d, {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 1000 },
+  });
 
-  return { status: "processed" };
+  // await truckQueue.add("save-telemetry", data, {
+  //   attempts: 3,
+  //   backoff: { type: "exponential", delay: 1000 },
+  // });
+  return { status: "processing" };
 };
 
 export const fetchTelemetryStats = async () => {
@@ -41,12 +42,12 @@ export const fetchTelemetryStats = async () => {
     };
   }
 
-  const total = 0;
+  let total = 0;
 
   telementryData.reduce((prev, curr) => {
     total += curr.temperature;
   }, telementryData[0]);
-  // const
+  const averageTemperature = total / telementryData.length;
 
   return {
     totalVehicles,
