@@ -13,6 +13,21 @@ class TelementryRepository extends BaseRepository {
   async findById(id){
     return await this.findOne({_id:id})
   }
+  
+  async getStats() {
+    const stats = await this.aggregate([
+      {
+        $group: {
+          _id: null, // We want the average across the whole collection
+          averageTemperature: { $avg: "$temperature" },
+          totalReadings: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    // Aggregate returns an array, so we return the first object or a default
+    return stats[0] || { averageTemperature: 0, totalReadings: 0 };
+  }
 }
 
 export const telementryRepository = new TelementryRepository();

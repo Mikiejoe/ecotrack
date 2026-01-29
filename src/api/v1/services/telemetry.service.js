@@ -13,45 +13,27 @@ export const processTelemetry = async (vehicleId, data) => {
     ...data,
     vehicle: vehicleId,
   };
-  // console.log("d: ",d)
-
   await truckQueue.add("process-telemetry", d, {
     attempts: 3,
     backoff: { type: "exponential", delay: 1000 },
   });
 
-  // await truckQueue.add("save-telemetry", data, {
-  //   attempts: 3,
-  //   backoff: { type: "exponential", delay: 1000 },
-  // });
   return { status: "processing" };
 };
 
 export const fetchTelemetryStats = async () => {
   logger.info("Fetching telemetry statistics");
 
-  const totalVehicles = await vehicleRepository.count();
-  const alertsTriggered = await alertRepository.count();
-  const telementryData = await telementryRepository.findAll();
-  const telementryLn = telementryData.length;
-  if (telementryLn < 1) {
-    return {
-      totalVehicles,
-      averageTemperature: 0,
-      alertsTriggered,
-    };
-  }
-
-  let total = 0;
-
-  telementryData.reduce((prev, curr) => {
-    total += curr.temperature;
-  }, telementryData[0]);
-  const averageTemperature = total / telementryData.length;
+  const [totalVehicles, alertsTriggered, telemetryStats] = await Promise.all([
+    vehicleRepository.count(),
+    alertRepository.count(),
+    telementryRepository.getStats()
+  ]);
 
   return {
     totalVehicles,
-    averageTemperature,
+    averageTemperature: telemetryStats.averageTemperature,
     alertsTriggered,
+    totalDataPoints: telemetryStats.totalReadings
   };
 };
