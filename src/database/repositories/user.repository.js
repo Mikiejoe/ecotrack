@@ -15,6 +15,15 @@ class UserRepository extends BaseRepository {
       throw error;
     }
   }
+  async findByEmail2(email){
+    try {
+      const user = await UserModel.findOne({ email });
+      if (!user) return null;
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
   async findById(id) {
     try {
       const user = await this.findOne({ _id: id });

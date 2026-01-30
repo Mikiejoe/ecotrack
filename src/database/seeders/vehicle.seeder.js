@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import logger from '../../core/logger.js';
 import { connectDB } from '../index.js';
-import { vehicleRepository } from '../vehicle.reposotory.js';
+import { vehicleRepository } from '../repositories/vehicle.reposotory.js';
 const dummyVehicles = [
     {
         vin: '1HGCM82635A0',

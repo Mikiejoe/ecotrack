@@ -1,28 +1,32 @@
 // import { vehicleRepository } from 'database/vehicle.repository.js';
-import { vehicleEvents } from '../../../events/vehicle.events.js';
+// import { vehicleEvents } from '../../../events/vehicle.events.js';
 import logger from '../../../core/logger.js';
 import { vehicleRepository } from '../../../database/repositories/vehicle.reposotory.js';
 
 
 export const registerVehicle = async (data) => {
-    const vin = data.vin;
-    if (!vin) {
-        throw new Error('VIN is required');
-    }
-    const existing = await vehicleRepository.findOne({ vin });
-    if (existing) {
-        throw new Error('Vehicle with this VIN already exists');
-    }
     return await vehicleRepository.create(data);
 };
+/**
+ * Fetches all vehicle 
+ */
+
+export const getVehicles = async ()=>{
+    return await vehicleRepository.findAll()
+}
+
 /**
  * Fetches vehicle details by ID
  */
 export const getVehicleById = async (id) => {
-    const vehicle = await vehicleRepository.findOne({ _id: id });
-    if (!vehicle) {
-        throw new Error('Vehicle not found');
-    }
+    const vehicle = await vehicleRepository.findById(id);
+    return vehicle;
+};
+/**
+ * Fetches vehicle details by vin
+ */
+export const getVehicleByVIN = async (vin) => {
+    const vehicle = await vehicleRepository.findByVin(vin);
     return vehicle;
 };
 /**
@@ -45,20 +49,19 @@ export const processTelemetryUpdate = async (id, telemetry) => {
     // We isolate this logic so it's easy to change the threshold later
     const TEMP_THRESHOLD = 100;
     if (temperature > TEMP_THRESHOLD) {
-        logger.warn(`🔥 ANOMALY DETECTED: Vehicle ${updatedVehicle.vin} is at ${temperature}°C`);
+        logger.warn(`ANOMALY DETECTED: Vehicle ${updatedVehicle.vin} is at ${temperature}°C`);
         // 3. Trigger decoupled side-effects
-        vehicleEvents.emit('ENGINE_OVERHEAT', {
-            vehicleId: id,
-            vin: updatedVehicle.vin,
-            temperature,
-            timestamp: new Date()
-        });
+            // vehicleEvents.emit('ENGINE_OVERHEAT', {
+            //     vehicleId: id,       
+            //     vin: updatedVehicle.vin,
+            //     temperature,
+            //     timestamp: new Date()
+            // });
     }
     return updatedVehicle;
 };
 export const getFleetOverview = async () => {
     const stats = await vehicleRepository.getFleetStats();
-    // Fallback if no vehicles exist yet
     if (!stats || stats.length === 0) {
         return {
             totalVehicles: 0,
@@ -77,8 +80,6 @@ export const updateVehicleLocation = async (id, longitude, latitude) => {
     if (!updatedVehicle) {
         throw new Error('Vehicle not found');
     }
-    // Optional: Trigger a 'LocationChanged' event for real-time maps
     // vehicleEvents.emit('LOCATION_UPDATED', { id, coordinates: [longitude, latitude] });
     return updatedVehicle;
 };
-//# sourceMappingURL=vehicle.service.js.map

@@ -5,6 +5,11 @@ class TripRepository extends BaseRepository {
   constructor() {
     super(TripModel);
   }
+
+  async getTripById(id){
+    return await this.findOne({_id:id})
+  }
+  
 }
 
 export const tripRepository = new TripRepository();

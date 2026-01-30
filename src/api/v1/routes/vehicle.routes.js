@@ -1,12 +1,18 @@
-import { Router } from 'express';
-import * as vehicleController from '../controllers/vehicle.controller.js';
-import { authenticate } from '../middlewares/auth.middleware.js';
+import { Router } from "express";
+import * as vehicleController from "../controllers/vehicle.controller.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validator.middleware.js";
+import { vehicleValidation } from "../validators/vehicle.validator.js";
 const router = Router();
-// This route is public (e.g., for a public tracking page)
-router.get('/public-stats', vehicleController.getStats);
-// All routes below this line will require a valid JWT
+router.get("/public-stats", vehicleController.getStats);
 router.use(authenticate);
-router.post('/', vehicleController.createVehicle);
-router.patch('/:id/location', vehicleController.updateLocation);
+router.post(
+  "/",
+  vehicleValidation,
+  validate,
+  vehicleController.createVehicle
+);
+router.get("/",vehicleController.getVehicles)
+router.get("/:id",vehicleController.getVehicle)
+router.patch("/:id/location", vehicleController.updateLocation);
 export default router;
-//# sourceMappingURL=vehicle.routes.js.map
